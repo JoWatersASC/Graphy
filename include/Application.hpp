@@ -16,7 +16,8 @@ private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	SDL_Event e;
-
 	std::string bg_name;
 	Graph g;
+
+	void Render(SDL_Texture* bgTexture, SDL_Rect& bgRect, SDL_Texture* drawTexture);
 };
