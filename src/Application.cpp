@@ -2,13 +2,6 @@
 
 #include"Application.hpp"
 
-SDL_Window*   Application::window   = nullptr;
-SDL_Renderer* Application::renderer = nullptr;
-SDL_Event     Application::e;
-
-std::string Application::bg_name;
-Graph       Application::g;
-
 void Application::HandleEvent(SDL_Event* e) {
     g.handleEvent(e);
 }
@@ -17,7 +10,9 @@ void Application::Init() {
     SDL_Init(SDL_INIT_EVERYTHING);
     window = SDL_CreateWindow("Graph Maker", 200, 60, 1280, 680, SDL_WINDOW_RESIZABLE);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    
     bg_name = "../assets/grid.png";
+    g = Graph();
 }
 
 void Application::Run() {

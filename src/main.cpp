@@ -6,9 +6,10 @@
 #include"Application.hpp"
 
 int main(int argc, char* argv[]){
-	Application::Init();
-	Application::Run();
-	Application::End();
+	Application app;
+	app.Init();
+	app.Run();
+	app.End();
 
 	return 0;
 }

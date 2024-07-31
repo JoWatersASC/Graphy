@@ -6,17 +6,17 @@ class Application {
 public:
 	Application() = default;
 
-	static void Init();
-	static void Run();
-	static void End();
+	void Init();
+	void Run();
+	void End();
 
-	static void HandleEvent(SDL_Event*);
+	void HandleEvent(SDL_Event*);
 
 private:
-	static SDL_Window* window;
-	static SDL_Renderer* renderer;
-	static SDL_Event e;
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+	SDL_Event e;
 
-	static std::string bg_name;
-	static Graph g;
+	std::string bg_name;
+	Graph g;
 };
