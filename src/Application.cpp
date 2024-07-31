@@ -4,14 +4,37 @@
 
 void Application::HandleEvent(SDL_Event* e) {
     g.handleEvent(e);
+
+    if (e->type == SDL_WINDOWEVENT && e->window.event == SDL_WINDOWEVENT_RESIZED) {
+        int drawWidth, drawHeight;
+        SDL_GetWindowSize(m_window, &drawWidth, &drawHeight);
+        m_ContentWindow.drawTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, drawWidth, drawHeight);
+        SDL_SetTextureBlendMode(m_ContentWindow.drawTexture, SDL_BLENDMODE_BLEND);
+    }
 }
 
 void Application::Init() {
     SDL_Init(SDL_INIT_EVERYTHING);
-    window = SDL_CreateWindow("Graph Maker", 200, 60, 1280, 680, SDL_WINDOW_RESIZABLE);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED & SDL_RENDERER_TARGETTEXTURE);
+    m_window = SDL_CreateWindow("Graph Maker", 200, 60, 1280, 680, SDL_WINDOW_RESIZABLE);
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED & SDL_RENDERER_TARGETTEXTURE);
     bg_name = "../assets/grid.png";
     g = Graph();
+
+    {
+        SDL_Surface* tempSurface = IMG_Load(bg_name.c_str());
+        m_ContentWindow.bgTexture = SDL_CreateTextureFromSurface(m_renderer, tempSurface);
+        SDL_FreeSurface(tempSurface);
+
+        int bgWidth, bgHeight;
+        SDL_QueryTexture(m_ContentWindow.bgTexture, nullptr, nullptr, &bgWidth, &bgHeight);
+        m_ContentWindow.bgRect = { 0, 0, bgWidth, bgHeight };
+
+        int drawWidth, drawHeight;
+        SDL_GetWindowSize(m_window, &drawWidth, &drawHeight);
+        m_ContentWindow.drawTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, drawWidth, drawHeight);
+        SDL_SetTextureBlendMode(m_ContentWindow.drawTexture, SDL_BLENDMODE_BLEND);
+    }
+    
 
     Node a(vec2(140, 80), "A");
     Node b(vec2(500, 177), "B");
@@ -23,27 +46,7 @@ void Application::Init() {
 }
 
 void Application::Run() {
-    bool running = true;
-
-    //Background Texture
-    SDL_Texture* bgTexture;
-    SDL_Rect bgRect;
-    //Graph Drawing Texture
-    SDL_Texture* drawTexture;
-
-    {
-        int bgWidth, bgHeight;
-        SDL_Surface* tempSurface = IMG_Load(bg_name.c_str());
-        bgTexture = SDL_CreateTextureFromSurface(renderer, tempSurface);
-        SDL_QueryTexture(bgTexture, nullptr, nullptr, &bgWidth, &bgHeight);
-        bgRect = { 0, 0, bgWidth, bgHeight };
-        SDL_FreeSurface(tempSurface);
-
-        int drawWidth, drawHeight;
-        SDL_GetWindowSize(window, &drawWidth, &drawHeight);
-        drawTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, drawWidth, drawHeight);
-        SDL_SetTextureBlendMode(drawTexture, SDL_BLENDMODE_BLEND);
-    }
+    bool running = true;    
 
     while (running) {
         while (SDL_PollEvent(&e)) {
@@ -55,30 +58,32 @@ void Application::Run() {
             }
         }
 
-        Render(bgTexture, bgRect, drawTexture);
+        Render();
     }
+
+    End();
 }
 
 void Application::End() {
-    SDL_DestroyWindow(window);
-    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(m_window);
+    SDL_DestroyRenderer(m_renderer);
     exit(0);
 }
 
-void Application::Render(SDL_Texture* bgTexture, SDL_Rect& bgRect, SDL_Texture* drawTexture) {
+void Application::Render() {
     //Render background
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, bgTexture, &bgRect, &bgRect);
+    SDL_RenderClear(m_renderer);
+    SDL_RenderCopy(m_renderer, m_ContentWindow.bgTexture, &m_ContentWindow.bgRect, &m_ContentWindow.bgRect);
 
     //Render drawing area
-    SDL_SetRenderTarget(renderer, drawTexture);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    SDL_RenderClear(renderer);
-    g.render(renderer);
+    SDL_SetRenderTarget(m_renderer, m_ContentWindow.drawTexture);
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 0);
+    SDL_RenderClear(m_renderer);
+    g.render(m_renderer);
 
-    //Set target back to window and draw textures
-    SDL_SetRenderTarget(renderer, NULL);
-    SDL_RenderCopy(renderer, drawTexture, NULL, NULL);
+    //Set target back to m_window and draw textures
+    SDL_SetRenderTarget(m_renderer, NULL);
+    SDL_RenderCopy(m_renderer, m_ContentWindow.drawTexture, NULL, NULL);
 
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(m_renderer);
 }

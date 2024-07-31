@@ -3,3 +3,4 @@
 #except .gitignore and sdl2.dll
 !.gitignore
 !SDL2.dll
+!SDL_image.dll

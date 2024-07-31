@@ -9,7 +9,6 @@ int main(int argc, char* argv[]){
 	Application app;
 	app.Init();
 	app.Run();
-	app.End();
 
 	return 0;
 }
