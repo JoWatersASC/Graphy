@@ -1,6 +1,6 @@
 #include"Node.hpp"
 
-float Node::s_rad = 50;
+float Node::s_rad = 25;
 
 bool Node::handle(SDL_Event* e) {
 	int x, y;
