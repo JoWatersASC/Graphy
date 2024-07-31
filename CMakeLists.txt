@@ -18,7 +18,7 @@ link_directories(${SDL_LIB_DIR})
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 SDL2main SDL2test SDL2gfx)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 SDL2main SDL2test SDL2gfx SDL2_image)
 
 target_sources(${PROJECT_NAME} PUBLIC ${INCLUDE_FILES})
     
