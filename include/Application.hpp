@@ -8,7 +8,6 @@ private:
 public:
 	Application() = default;
 
-	static void Initialize();
 	static void Run();
 	static void End();
 

@@ -2,6 +2,7 @@
 
 #include<vector>
 #include<iostream>
+#include<string>
 
 #include"SDL2/SDL.h"
 #include"SDL2/SDL2_gfxPrimitives.h"
@@ -9,10 +10,12 @@
 #include"node_internal.hpp"
 
 struct Node {
-	float _x, _y;
+	int _x, _y;
 	std::string _name;
 	std::vector<Node*> m_neighbors;
-    bool _isActive = false;
+    bool _isActive   = false;
+    bool _isDragging = false;
+    bool _canDrag    = false;
 
     Uint32 m_color;
     Uint32 m_aColor;

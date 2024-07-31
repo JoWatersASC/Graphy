@@ -1,7 +1,5 @@
 #include"Graph.hpp"
 
-edge_type Graph::et = DIRECTED;
-
 void Graph::addNode(vec2 pos, std::string name) {
 	if (name == "") name += 'A' + m_nodes.size();
 	m_nodes.emplace_back(std::make_unique<Node>(pos, name));
@@ -10,29 +8,78 @@ void Graph::addNode(Node& node) {
 	m_nodes.emplace_back(std::make_unique<Node>(std::move(node)));
 }
 
-void Graph::addEdge(Node& a, Node& b, float value) {
+void Graph::addEdge(Node& a, Node& b, edge_type et, float value) {
 	m_adjList[&a][&b] = { value, et };
 	if(et == UNDIRECTED)
 		m_adjList[&b][&a] = { value, et };
 }
-void Graph::addEdge(int a, int b, float value) {
+void Graph::addEdge(int a, int b, edge_type et, float value) {
 	addEdge(*m_nodes[a], *m_nodes[b], et);
 }
 
+void Graph::removeEdge(Node& a, Node& b){
+	if (m_adjList[&a][&b].type == UNDIRECTED)
+		m_adjList[&b].erase(&a);
+	m_adjList[&a].erase(&b);
+}
+void Graph::removeEdge(int a, int b){
+	removeEdge(*m_nodes[a], *m_nodes[b]);
+}
+
 void Graph::handleEvent(SDL_Event* e) {
-	if (e->type == SDL_MOUSEBUTTONDOWN) {
+	bool newNode = true;
+
+	switch (e->type) {
+	case SDL_MOUSEBUTTONDOWN:
 		for (auto& node : m_nodes) {
+			bool isClicked = false;
+
 			if (node->handle(e)) {
+				isClicked = true;
+				newNode = false;
+			}
+
+			if(isClicked) {
 				if (!_activeNode) {
 					_activeNode = node.get();
+					break;
 				}
 				else {
-					if (!m_adjList[_activeNode].count(node.get()))
-						addEdge(*_activeNode, *node.get());
+					if (_activeNode == node.get()) {
+						if (!isClicked) {
+							continue;
+						}
+					}
+					else if (!m_adjList[_activeNode].count(node.get())) {
+						edge_type et = e->button.button == SDL_BUTTON_LEFT ? DIRECTED : UNDIRECTED;
+						addEdge(*_activeNode, *node.get(), et);
+					}
+					else {
+						removeEdge(*_activeNode, *node.get());
+					}
+
+					node->_isActive = false;
+					_activeNode->_isActive = false;
 					_activeNode = nullptr;
 				}
 			}
 		}
+
+		if (newNode) {
+			std::string name = "Node " + std::to_string(m_nodes.size());
+			int x, y;
+			SDL_GetMouseState(&x, &y);
+
+			addNode(vec2(x, y), name);
+		}
+
+		break;
+
+	default:
+		for (auto& node : m_nodes) {
+			node->handle(e);
+		}
+		break;
 	}
 }
 
@@ -51,6 +98,3 @@ void Graph::render(SDL_Renderer* renderer) {
 		}
 	}
 }
-
-//int Graph::udrawLine(SDL_Renderer* renderer, Node& a, Node& b, Uint32 color = 0xFF000000){}
-//void Graph::ddrawLine(SDL_Renderer* renderer, Node& a, Node& b, Uint32 color = 0xFF000000, Uint32 arrowCol = 0xFF000000){}

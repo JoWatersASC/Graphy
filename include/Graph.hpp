@@ -19,13 +19,14 @@ class Graph {
 public:
 	Graph() = default;
 
-	static edge_type et;
-
 	void addNode(vec2 pos = vec2(50, 50), std::string name = "");
 	void addNode(Node&);
 
-	void addEdge(Node&, Node&, float value = 1.0f);
-	void addEdge(int, int, float value = 1.0f);
+	void addEdge(Node&, Node&, edge_type et = DIRECTED, float value = 1.0f);
+	void addEdge(int, int, edge_type et = DIRECTED, float value = 1.0f);
+
+	void removeEdge(Node&, Node&);
+	void removeEdge(int, int);
 
 	void handleEvent(SDL_Event*);
 	void render(SDL_Renderer*);

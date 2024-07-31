@@ -3,10 +3,8 @@
 Graph Application::g;
 
 void Application::HandleEvent(SDL_Event* e) {
-
+    g.handleEvent(e);
 }
-
-void Application::Initialize() {}
 
 void Application::Run() {
     SDL_Window* window = nullptr;
@@ -26,15 +24,12 @@ void Application::Run() {
     g.addNode(b);
     g.addNode(c);
 
-    g.addEdge(0, 1);
-    g.addEdge(1, 2);
-    g.addEdge(0, 2, UNDIRECTED);
-
     while (running) {
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
 
         while (SDL_PollEvent(&e)) {
+            Application::HandleEvent(&e);
             if (e.type == SDL_QUIT) {
                 SDL_Quit();
                 exit(0);
