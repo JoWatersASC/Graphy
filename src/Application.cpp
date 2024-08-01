@@ -2,21 +2,10 @@
 
 #include"Application.hpp"
 
-void Application::HandleEvent(SDL_Event* e) {
-    g.handleEvent(e);
-
-    if (e->type == SDL_WINDOWEVENT && e->window.event == SDL_WINDOWEVENT_RESIZED) {
-        int drawWidth, drawHeight;
-        SDL_GetWindowSize(m_window, &drawWidth, &drawHeight);
-        m_ContentWindow.drawTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, drawWidth, drawHeight);
-        SDL_SetTextureBlendMode(m_ContentWindow.drawTexture, SDL_BLENDMODE_BLEND);
-    }
-}
-
 void Application::Init() {
     SDL_Init(SDL_INIT_EVERYTHING);
     m_window = SDL_CreateWindow("Graph Maker", 200, 60, 1280, 680, SDL_WINDOW_RESIZABLE);
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED & SDL_RENDERER_TARGETTEXTURE);
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
     bg_name = "../assets/grid.png";
     g = Graph();
 
@@ -86,4 +75,16 @@ void Application::Render() {
     SDL_RenderCopy(m_renderer, m_ContentWindow.drawTexture, NULL, NULL);
 
     SDL_RenderPresent(m_renderer);
+}
+
+
+void Application::HandleEvent(SDL_Event* e) {
+    g.handleEvent(e);
+
+    if (e->type == SDL_WINDOWEVENT && e->window.event == SDL_WINDOWEVENT_RESIZED) {
+        int drawWidth, drawHeight;
+        SDL_GetWindowSize(m_window, &drawWidth, &drawHeight);
+        m_ContentWindow.drawTexture = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, drawWidth, drawHeight);
+        SDL_SetTextureBlendMode(m_ContentWindow.drawTexture, SDL_BLENDMODE_BLEND);
+    }
 }
