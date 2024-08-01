@@ -13,12 +13,26 @@ set(SDL_LIB_DIR "${LIB_DIR}/SDL2/x64")
 file(GLOB SOURCE_FILES "${SOURCE_DIR}/*.cpp")
 file(GLOB INCLUDE_FILES "${INCLUDE_DIR}/*.h*")
 
-link_directories(${SDL_LIB_DIR})
+if(WIN32)
+    link_directories(${SDL_LIB_DIR})
+endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 SDL2main SDL2test SDL2gfx SDL2_image)
+if(UNIX AND NOT APPLE)
+    find_package(SDL2 REQUIRED)
 
+    if(SDL2_FOUND)
+        # Include SDL2 headers and link libraries
+        include_directories(${SDL2_INCLUDE_DIRS})
+        target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
+    else()
+        message(FATAL_ERROR "SDL2 not found!")
+    endif()
+
+elseif(WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 SDL2main SDL2test SDL2gfx SDL2_image)
+endif()
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
 target_sources(${PROJECT_NAME} PUBLIC ${INCLUDE_FILES})
-    
