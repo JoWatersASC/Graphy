@@ -44,7 +44,7 @@ void Node::render(SDL_Renderer* renderer) {
 	aacircleColor(renderer, (int)_x, (int)_y, s_rad, _isActive ? m_aColor : m_color);
 	filledCircleColor(renderer, (int)_x, (int)_y, s_rad - !_isActive, _isActive ? m_aColor : 0xFFFFFFFF);
 
-	stringColor(renderer, (int)_x - 4*strlen(_name.c_str()), (int)(_y) - 3, _name.c_str(), _isActive ? 0xFFFFFFFF : 0xFF000000);
+	stringColor(renderer, (int)_x - 4 * _name.length(), (int)(_y)-3, _name.c_str(), _isActive ? 0xFFFFFFFF : 0xFF000000);
 }
 
 void Node::print(std::ostream& out = std::cout) {
