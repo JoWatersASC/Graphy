@@ -8,17 +8,17 @@ void Graph::addNode(Node& node) {
 	m_nodes.emplace_back(std::make_unique<Node>(std::move(node)));
 }
 
-void Graph::addEdge(Node& a, Node& b, edge_type et, float value) {
-	m_adjList[&a][&b] = { value, et };
-	if(et == UNDIRECTED)
-		m_adjList[&b][&a] = { value, et };
+void Graph::addEdge(Node& a, Node& b, EdgeType et, float value) {
+	m_adjList[&a][&b] = { &a, &b, value, et };
+	if(et == EdgeType::UNDIRECTED)
+		m_adjList[&b][&a] = { &a, &b, value, et };
 }
-void Graph::addEdge(int a, int b, edge_type et, float value) {
+void Graph::addEdge(int a, int b, EdgeType et, float value) {
 	addEdge(*m_nodes[a], *m_nodes[b], et);
 }
 
 void Graph::removeEdge(Node& a, Node& b){
-	if (m_adjList[&a][&b].type == UNDIRECTED)
+	if (m_adjList[&a][&b].type == EdgeType::UNDIRECTED)
 		m_adjList[&b].erase(&a);
 	m_adjList[&a].erase(&b);
 }
@@ -51,7 +51,7 @@ void Graph::handleEvent(SDL_Event* e) {
 						}
 					}
 					else if (!m_adjList[_activeNode].count(node.get())) {
-						edge_type et = e->button.button == SDL_BUTTON_LEFT ? DIRECTED : UNDIRECTED;
+						EdgeType et = e->button.button == SDL_BUTTON_LEFT ? EdgeType::DIRECTED : EdgeType::UNDIRECTED;
 						addEdge(*_activeNode, *node.get(), et);
 					}
 					else {
@@ -89,7 +89,7 @@ void Graph::render(SDL_Renderer* renderer) {
 	}
 	for (auto [node, edgeList] : m_adjList) {
 		for (auto [neighbor, n_edge] : edgeList) {
-			if (n_edge.type == DIRECTED) {
+			if (n_edge.type == EdgeType::DIRECTED) {
 				ddrawEdge(renderer, *node, *neighbor);
 			}
 			else {

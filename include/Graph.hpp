@@ -5,15 +5,20 @@
 
 #include"Node.hpp"
 
-enum edge_type { DIRECTED, UNDIRECTED };
-struct edge {
+enum class EdgeType { DIRECTED, UNDIRECTED };
+struct Edge {
+	Node* a;
+	Node* b;
 	float val;
-	edge_type type = DIRECTED;
+	EdgeType type = EdgeType::DIRECTED;
+
+	void draw(SDL_Renderer* renderer);
+	
 };
 
-typedef std::unordered_map<Node*, std::unordered_map<Node*, edge>> AdjacencyList;
-typedef std::unordered_map<std::pair<Node, Node>, float> EdgeList;
+typedef std::unordered_map<Node*, std::unordered_map<Node*, Edge>> AdjacencyList;
 typedef std::vector<std::vector<float>> AdjacencyMatrix;
+typedef std::vector<Edge> EdgeList;
 
 class Graph {
 public:
@@ -22,8 +27,8 @@ public:
 	void addNode(vec2 pos = vec2(50, 50), std::string name = "");
 	void addNode(Node&);
 
-	void addEdge(Node&, Node&, edge_type et = DIRECTED, float value = 1.0f);
-	void addEdge(int, int, edge_type et = DIRECTED, float value = 1.0f);
+	void addEdge(Node&, Node&, EdgeType et = EdgeType::DIRECTED, float value = 1.0f);
+	void addEdge(int, int, EdgeType et = EdgeType::DIRECTED, float value = 1.0f);
 
 	void removeEdge(Node&, Node&);
 	void removeEdge(int, int);
