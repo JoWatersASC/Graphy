@@ -2,4 +2,4 @@
 *
 #except .gitignore
 !.gitignore
-!SDL2/
+!SDL2/*
